@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Las cinco heridas — test y compatibilidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#17151A; --bg-card:#211E25; --bg-card-2:#28242C;
+    --text:#EDE6DC; --text-dim:#9A8FA0; --text-faint:#695F70;
+    --gold:#C9A15A; --gold-dim:#8A6F3E;
+    --rechazo:#9B86B5; --abandono:#7C9CB8; --humillacion:#C79A5E; --traicion:#B66E6E; --injusticia:#74A98C;
+    --border:#332E3B;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; line-height:1.65; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:500; margin:0 0 0.5rem;}
+  .wrap{max-width:760px; margin:0 auto; padding:4rem 1.5rem 6rem;}
+  .eyebrow{font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:0.75rem; font-weight:500;}
+  h1{font-size:38px; font-style:italic; font-weight:400; line-height:1.15; margin-bottom:1rem;}
+  .lede{color:var(--text-dim); font-size:16px; max-width:580px;}
+  .crack{width:100%; height:18px; margin:3rem 0; opacity:0.8;}
+  section{margin-bottom:4rem;}
+  h2{font-size:24px; font-style:italic;}
+  .sub{color:var(--text-dim); font-size:14px; margin-bottom:1.75rem;}
+
+  .wcard{background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; border-top:3px solid var(--c); margin-bottom:14px;}
+  .wcard .name{font-family:'Fraunces',serif; font-size:21px; font-weight:500; color:var(--c);}
+  .wcard .mask{font-size:12px; color:var(--text-faint); margin-bottom:0.8rem;}
+  .wcard .motor{font-size:14px; font-style:italic; color:var(--text); border-left:2px solid var(--c); padding-left:12px; margin:0.8rem 0 1.1rem;}
+  .wsub{margin-bottom:0.9rem;}
+  .wsub .wt{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-faint); margin-bottom:3px;}
+  .wsub p{font-size:14px; color:var(--text-dim); margin:0;}
+
+  .quiz-list{display:flex; flex-direction:column; gap:0;}
+  .qitem{padding:14px 2px; border-bottom:1px solid var(--border);}
+  .qitem .qtext{font-size:14.5px; margin-bottom:9px;}
+  .qscale{display:flex; gap:6px;}
+  .qscale button{flex:1; background:var(--bg-card); border:1px solid var(--border); color:var(--text-dim); font-family:'Inter',sans-serif; font-size:11.5px; padding:8px 4px; border-radius:7px; cursor:pointer;}
+  .qscale button.active{background:var(--gold); color:#1a1610; border-color:var(--gold); font-weight:500;}
+  .qbtn{margin-top:1.5rem; background:var(--gold); color:#1a1610; border:none; font-family:'Inter',sans-serif; font-weight:600; font-size:14px; padding:12px 22px; border-radius:8px; cursor:pointer;}
+  .qbtn:hover{background:#dab36c;}
+  #quizResult{margin-top:1.5rem; display:none;}
+  .resultcard{background:var(--bg-card); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:10px; padding:1.25rem 1.5rem;}
+  .resultcard .label{font-size:12px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em;}
+  .resultcard .name{font-family:'Fraunces',serif; font-size:22px; font-style:italic; margin:0.3rem 0;}
+  .gobtn{background:none; border:1px solid var(--gold-dim); color:var(--gold); font-family:'Inter',sans-serif; font-size:13px; padding:8px 14px; border-radius:7px; cursor:pointer; margin-top:0.75rem;}
+  .barrow{display:flex; align-items:center; gap:10px; margin:8px 0;}
+  .barrow .blabel{font-size:12.5px; width:90px; flex-shrink:0; color:var(--text-dim);}
+  .bartrack{flex:1; height:8px; background:var(--bg-card-2); border-radius:4px; overflow:hidden;}
+  .barfill{height:100%; border-radius:4px;}
+  .barrow .bpct{font-size:12px; width:38px; text-align:right; color:var(--text-faint); flex-shrink:0;}
+
+  .mode-toggle{display:inline-flex; background:var(--bg-card); border:1px solid var(--border); border-radius:9px; padding:3px; margin-bottom:1.5rem;}
+  .mode-toggle button{background:none; border:none; color:var(--text-dim); font-family:'Inter',sans-serif; font-size:13px; font-weight:500; padding:8px 18px; border-radius:7px; cursor:pointer;}
+  .mode-toggle button.active{background:var(--gold); color:#1a1610;}
+  .chips{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; margin-bottom:1.5rem;}
+  .chip{background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:10px 12px; cursor:pointer; text-align:left; position:relative;}
+  .chip .name{font-size:13px; font-weight:600; font-family:'Inter',sans-serif;}
+  .chip .mask{font-size:11px; color:var(--text-faint);}
+  .chip.sel{border-color:var(--c); background:var(--bg-card-2); box-shadow:inset 0 0 0 1px var(--c);}
+  .chip .x2{position:absolute; top:8px; right:10px; font-size:10px; color:var(--c); font-weight:600;}
+  .placeholder{padding:2rem; text-align:center; color:var(--text-faint); font-size:13px; border:1px dashed var(--border); border-radius:10px;}
+  .pairhead{display:flex; align-items:center; gap:10px; margin-bottom:1.1rem;}
+  .pairhead .vs{color:var(--text-faint); font-size:13px;}
+  .pairhead .pname{font-family:'Fraunces',serif; font-style:italic; font-size:19px;}
+  .field{margin-bottom:1.2rem; padding-top:1.2rem; border-top:1px solid var(--border);}
+  .field:first-of-type{border-top:none; padding-top:0;}
+  .field .ftitle{font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-faint); margin-bottom:6px;}
+  .field p{font-size:14.5px; margin:0; color:var(--text);}
+  .field ul{margin:0; padding-left:18px;}
+  .field li{font-size:14px; color:var(--text); margin-bottom:5px;}
+  .field.alerta{background:rgba(182,110,110,0.07); margin:0 -1.5rem; padding:1.2rem 1.5rem; border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .field.alerta .ftitle{color:#C77E7E;}
+  .field.salida{background:var(--bg-card-2); margin:1.2rem -1.5rem -1.25rem; padding:1.2rem 1.5rem; border-top:1px solid var(--gold-dim); border-radius:0 0 10px 10px;}
+  .field.salida .ftitle{color:var(--gold);}
+  .clearbtn{font-size:12px; color:var(--text-faint); background:none; border:1px solid var(--border); padding:6px 10px; border-radius:7px; cursor:pointer; float:right;}
+
+  footer{color:var(--text-faint); font-size:12px; text-align:center; margin-top:5rem;}
+  @media(max-width:480px){h1{font-size:30px;} .qscale button{font-size:10px; padding:7px 2px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">basado en Lise Bourbeau</div>
+  <h1>Las cinco heridas del alma</h1>
+  <p class="lede">Cada herida construye una máscara para protegerse — con un origen, una marca en el cuerpo y un motor emocional propio que la mueve. Descubre cuál es la tuya y explora a fondo cómo se cruza con la de otra persona, en amistad o en amor.</p>
+
+  <svg class="crack" viewBox="0 0 740 18" preserveAspectRatio="none"><path d="M0 9 L60 6 L100 12 L160 4 L230 11 L300 7 L360 13 L430 5 L500 10 L570 6 L640 12 L700 8 L740 9" fill="none" stroke="#C9A15A" stroke-width="1.5" opacity="0.55"/></svg>
+
+  <section>
+    <div class="eyebrow">las cinco heridas</div>
+    <h2>Qué mueve a cada una, por dentro</h2>
+    <p class="sub">Varias heridas se parecen en lo que hacen por fuera — dar, controlar, desaparecer — pero el origen, el cuerpo y el motivo de fondo son siempre distintos.</p>
+    <div id="woundList"></div>
+  </section>
+
+  <svg class="crack" viewBox="0 0 740 18" preserveAspectRatio="none"><path d="M0 11 L80 5 L140 13 L210 6 L280 10 L350 4 L420 12 L490 7 L560 11 L630 5 L700 10 L740 8" fill="none" stroke="#C9A15A" stroke-width="1.5" opacity="0.55"/></svg>
+
+  <section>
+    <div class="eyebrow">test — 30 preguntas</div>
+    <h2>¿Cuál es tu herida dominante?</h2>
+    <p class="sub">Para cada frase, marca qué tanto te describe. Entre más preguntas respondas con honestidad, más preciso es el resultado — al final verás el desglose completo de las cinco heridas, no solo la más alta.</p>
+    <div class="quiz-list" id="quizList"></div>
+    <button class="qbtn" id="quizBtn">Ver resultado</button>
+    <div id="quizResult"></div>
+  </section>
+
+  <svg class="crack" viewBox="0 0 740 18" preserveAspectRatio="none"><path d="M0 7 L70 13 L130 5 L200 11 L270 6 L340 12 L410 4 L480 10 L550 6 L620 13 L690 7 L740 9" fill="none" stroke="#C9A15A" stroke-width="1.5" opacity="0.55"/></svg>
+
+  <section>
+    <div class="eyebrow">compatibilidad</div>
+    <h2>Dos heridas, una dinámica completa</h2>
+    <p class="sub">Elige el contexto y dos heridas (puedes elegir la misma dos veces). Cada combinación incluye la atracción inicial, qué se activa, el ciclo que se repite, señales de alerta concretas y cómo se rompe el patrón.</p>
+    <div class="mode-toggle">
+      <button id="modeAmor" class="active">Amor</button>
+      <button id="modeAmistad">Amistad</button>
+    </div>
+    <button class="clearbtn" id="clearSel">Limpiar</button>
+    <div class="chips" id="chips"></div>
+    <div id="compatResult"></div>
+  </section>
+
+  <footer>Material de reflexión personal — no sustituye acompañamiento terapéutico.</footer>
+</div>
+
+<script>
+const wounds = [
+  { id:'rechazo', name:'Rechazo', mask:'Retirada', color:'--rechazo',
+    motor:'Si desaparezco, no pueden rechazarme.',
+    origen:'Se activa generalmente entre los seis meses de gestación y los doce meses de vida, casi siempre con el progenitor del mismo sexo. No hace falta que ese padre haya rechazado activamente al bebé — basta con que el niño haya interpretado una o varias experiencias como un rechazo a su persona. En casos extremos (un embarazo no buscado), la herida puede activarse incluso en el vientre materno.',
+    cuerpo:'El cuerpo suele ser delgado, con poca carne en los huesos, como si una parte de él quisiera desaparecer o no terminar de habitar el espacio físico. Los ojos esconden miedo, y es frecuente que aparezcan problemas de memoria, producto de ese miedo tan profundo a existir.',
+    patron:'Pasa por fases de gran amor y fases de odio profundo, casi bipolar en el afecto. Y aquí está lo que más cuesta ver: acusa a otros de exactamente lo que hace él mismo pero no quiere mirar. Tiene tanto miedo a rechazar a alguien que termina haciéndolo — el miedo mismo fabrica lo que más teme.',
+    tarea:'Practicar quedarse en vez de desaparecer, justo en el momento en que el impulso es huir. Aprender a ocupar espacio sin pedir permiso primero.' },
+  { id:'abandono', name:'Abandono', mask:'Dependencia', color:'--abandono',
+    motor:'Necesito la prueba constante de que no te vas a ir.',
+    origen:'Suele activarse entre los seis y los dieciocho meses de vida, con el progenitor del sexo opuesto. Situaciones comunes: la llegada de un hermano que acapara la atención de la madre, padres ausentes por trabajo, hospitalización sin acompañamiento, o quedarse al cuidado de un familiar lejos de los padres por un tiempo.',
+    cuerpo:'Algunas partes del cuerpo se muestran flácidas o sin tono muscular, como si no pudieran sostenerse solas — un reflejo físico de la creencia de que no puede valerse por sí mismo.',
+    patron:'Tiende a pasar del papel de víctima al de salvador: rescata a otros, asume responsabilidades ajenas, ayuda para sentirse importante y esperar afecto a cambio, aunque no lo nombre así. Tiene un doble estándar que casi nunca ve: si él necesita un rato de soledad está bien, pero si lo necesita el otro, lo vive como abandono. No se da cuenta con qué frecuencia él mismo decepciona a los demás o abandona proyectos sin terminar.',
+    tarea:'Aprender a tolerar la soledad sin que se sienta como una amenaza a la propia existencia. Notar que un límite del otro no es lo mismo que un abandono.' },
+  { id:'humillacion', name:'Humillación', mask:'Masoquista', color:'--humillacion',
+    motor:'No merezco recibir, así que doy hasta agotarme.',
+    origen:'Puede producirse entre el primer y el tercer año de vida, con mayor frecuencia con la madre, aunque también puede activarse con cualquier figura que "controlara" al niño en su higiene, su forma de comer o de comportarse en público — incluso abuelos o educadores.',
+    cuerpo:'El cuerpo suele tener formas redondas y llenas. Cuanta más responsabilidad ajena asume, más peso gana — el cuerpo absorbe literalmente la carga que toma de los demás. Puede tener problemas de páncreas o de corazón, ligados a la dificultad de tratarse con dulzura y de sentirse merecedor de alegría.',
+    patron:'Aquí está lo más sutil de las cinco heridas: dar tanto por los demás termina quitándoles su propia responsabilidad y poder, sin que el masoquista lo note. Ejerce una forma silenciosa de control disfrazada de entrega. Cuando logra algo de libertad, se va al extremo (ayuda demasiado, gasta demasiado), y lo que hace para liberarse en un área lo aprisiona en otra.',
+    tarea:'Aprender a recibir y a decir que no, sin que eso signifique sentirse culpable o egoísta. Permitirse el placer sin tener que pagarlo con sufrimiento después.' },
+  { id:'traicion', name:'Traición', mask:'Controlador', color:'--traicion',
+    motor:'Si controlo todo, nadie podrá decepcionarme.',
+    origen:'Se produce entre los dieciocho meses y los tres años, con el padre del sexo opuesto, en el contexto de un fuerte lazo de amor (un complejo de Edipo o Electra) que no llegó a resolverse del todo.',
+    cuerpo:'No hay un marcador corporal tan definido como en otras heridas, pero el cuerpo y los gestos suelen transmitir firmeza, rapidez y control — movimientos seguros que comunican "tengo todo bajo control", incluso cuando por dentro no es así.',
+    patron:'Es, de las cinco, la herida con la sombra más difícil de ver: es incapaz de reconocer que él mismo podría traicionar a otros, y de hecho lo hace todo el tiempo, sin notarlo, mintiendo o rompiendo promesas y justificándose después. Cuando una relación pierde intensidad, busca de forma inconsciente maneras de que sea el otro quien lo abandone primero, así nunca es él quien traiciona.',
+    tarea:'Mostrar una vulnerabilidad real, sin que sea estratégica ni calculada. Soltar el control y aprender a confiar sin tener garantías de antemano.' },
+  { id:'injusticia', name:'Injusticia', mask:'Rígido', color:'--injusticia',
+    motor:'Si soy perfecto y no siento, no podrán ser injustos conmigo.',
+    origen:'Se produce generalmente entre los cuatro y los seis años, con el progenitor del mismo sexo, especialmente si ese padre era frío, autoritario, crítico o estricto, o si el niño sentía que era más apreciado por lo que hacía que por lo que era.',
+    cuerpo:'El cuerpo va todo recto, casi como si fuera "perfecto", con movimientos rápidos pero de poca flexibilidad. Suelen ser delgados, porque rara vez están satisfechos con lo logrado y siempre persiguen un siguiente objetivo.',
+    patron:'La distorsión más marcada: se consideran las personas más sensibles y cariñosas del mundo, mientras quienes los rodean los perciben fríos e insensibles. Exigen a otros precisión exacta en los detalles, pero ellos mismos exageran con facilidad al contar algo. El enfado es su emoción más constante, dirigida sobre todo hacia sí mismos, pero apenas son conscientes de él.',
+    tarea:'Nombrar lo que realmente se siente en el momento, en vez de la respuesta automática de "estoy bien". Aceptar no ser perfecto sin que eso se viva como una injusticia hacia uno mismo.' }
+];
+
+const quizItems = [
+  { t:'Prefiero pasar desapercibido/a antes que llamar la atención.', w:'rechazo' },
+  { t:'Necesito confirmación frecuente de que la otra persona no se va a ir.', w:'abandono' },
+  { t:'Hago cosas por los demás que jamás haría para mí mismo/a.', w:'humillacion' },
+  { t:'Me cuesta delegar porque siento que nadie lo hará tan bien como yo.', w:'traicion' },
+  { t:'Cuando me preguntan cómo estoy, casi siempre digo "bien" aunque no lo esté.', w:'injusticia' },
+  { t:'Cuando recibo mucho cariño o atención, me incomodo y no sé qué hacer con eso.', w:'rechazo' },
+  { t:'Me cuesta mucho estar solo/a; busco compañía casi todo el tiempo.', w:'abandono' },
+  { t:'Me cuesta recibir regalos, ayuda o cumplidos sin sentirme incómodo/a.', w:'humillacion' },
+  { t:'Prefiero no mostrar mis debilidades, por miedo a que las usen en mi contra.', w:'traicion' },
+  { t:'Soy muy exigente conmigo mismo/a y rara vez estoy satisfecho/a con lo que hago.', w:'injusticia' },
+  { t:'Tiendo a aislarme cuando algo me afecta, en vez de buscar compañía.', w:'rechazo' },
+  { t:'Cuando alguien se aleja un poco, siento que me está abandonando aunque no sea así.', w:'abandono' },
+  { t:'Cuando alguien cercano sufre, siento que es mi responsabilidad arreglarlo.', w:'humillacion' },
+  { t:'Necesito sentir que tengo el control de la situación para estar tranquilo/a.', w:'traicion' },
+  { t:'Me cuesta mostrar ternura o vulnerabilidad, aunque por dentro sea sensible.', w:'injusticia' },
+  { t:'Me cuesta creer que alguien pueda fijarse en mí o enamorarse de mí de verdad.', w:'rechazo' },
+  { t:'Asumo responsabilidades de otras personas aunque no me correspondan.', w:'abandono' },
+  { t:'Limpio o arreglo cosas cuando vienen visitas, pero no le doy importancia si estoy solo/a.', w:'humillacion' },
+  { t:'Antes de decir "no sé", prefiero inventar una respuesta que suene segura.', w:'traicion' },
+  { t:'Me comparo con quienes considero "más perfectos" y siempre salgo perdiendo en esa comparación.', w:'injusticia' },
+  { t:'Cuando algo me sale bien, tiendo a minimizarlo o no darle importancia.', w:'rechazo' },
+  { t:'Me cuesta tomar decisiones sin pedir la opinión de alguien más, aunque luego no la siga.', w:'abandono' },
+  { t:'Cuando siento placer haciendo algo o estando con alguien, una parte de mí se siente culpable.', w:'humillacion' },
+  { t:'Cuando alguien no confía en mí de entrada, lo siento como una traición.', w:'traicion' },
+  { t:'Uso mucho palabras como "siempre", "nunca" o "todo" cuando explico algo, aunque exagere un poco.', w:'injusticia' },
+  { t:'Siento que ocupar mucho espacio o tiempo de los demás los está molestando.', w:'rechazo' },
+  { t:'Cuando una relación se vuelve muy intensa, en el fondo busco una forma de que se enfríe.', w:'abandono' },
+  { t:'Tengo dificultad para decir que no, aunque por dentro no quiera hacer lo que me piden.', w:'humillacion' },
+  { t:'Me cuesta comprometerme del todo en una relación, aunque por fuera parezca seguro/a de ella.', w:'traicion' },
+  { t:'Me cuesta aceptar un regalo o ayuda que sienta que no me he ganado con esfuerzo.', w:'injusticia' }
+];
+
+const pairsAmor = {
+'rechazo|rechazo': { atrae:'El reconocimiento es casi instantáneo: dos personas que entienden, sin que haga falta explicarlo, por qué a veces se necesita desaparecer unos días, por qué el silencio no es enojo sino protección, por qué pedir demasiado de la presencia del otro se siente invasivo. Hay un alivio real en no tener que fingir ser "más sociable" de lo que se es.', activa:'El problema de fondo es que los dos esperan que el otro dé el primer paso hacia la cercanía, y como ambos cargan la misma creencia de que ocupar espacio es un riesgo, nadie lo da. Esa misma cortesía silenciosa que parecía respeto termina siendo la razón por la que ninguno se siente realmente sostenido cuando más lo necesita.', ciclo:'La relación puede sostenerse años en un paralelismo cómodo: conviven, se quieren genuinamente, comparten rutinas, pero rara vez se muestran del todo. Con los años se acumula una soledad compartida que ninguno nombra, porque nombrarla implicaría pedir algo, y pedir es justamente lo que la herida del rechazo les enseñó a no hacer jamás.', senales:['Pasan más tiempo evitando conflictos que resolviéndolos.', 'Ninguno sabe, en el fondo, qué es lo que verdaderamente le duele al otro.', 'Las celebraciones importantes se minimizan o se dejan pasar casi sin ceremonia.', 'Hay largas temporadas sin conflictos visibles, pero también sin momentos de verdadera cercanía.'], salida:'La tarea de cada uno es la misma: practicar quedarse en vez de desaparecer, justo en el momento en que el impulso pide huir. Ninguno puede esperar a que el otro inicie el acercamiento. Ayuda muchísimo nombrar lo que se siente antes de retirarse ("hoy necesito espacio, pero no es por ti") en vez de desaparecer sin aviso, así el silencio deja de leerse como rechazo. Sanar aquí no es volverse extrovertido, es animarse a ser visto un poco más cada vez.' },
+'abandono|abandono': { atrae:'Hay una empatía inmediata y profunda con la necesidad de afecto del otro: por fin alguien que entiende por qué preguntar "¿me quieres?" no es exagerar, sino una necesidad genuina. Se sienten vistos en su miedo más profundo a quedarse solos, y eso, al inicio, genera una cercanía intensa y rápida.', activa:'Los dos están pidiendo al mismo tiempo, y nadie tiene margen real para sostener al otro sin agotarse. Cada reclamo de uno activa instantáneamente la inseguridad del otro, así que en vez de calmarse mutuamente, se contagian la ansiedad.', ciclo:'Se instala una dependencia mutua agotadora: discusiones por sentirse desatendidos, reconciliaciones intensas, y vuelta a empezar. La relación entera depende de que ambos estén bien al mismo tiempo, algo casi imposible de sostener.', senales:['Las peleas más frecuentes empiezan con "¿por qué no me contestaste?".', 'Entre más tiempo pasan juntos, más vacío sienten al separarse, en vez de sentirse más seguros.', 'Cualquier mención de pasar tiempo con amistades propias genera tensión.', 'La palabra "dejar" o "irme" provoca una reacción desproporcionada.'], salida:'Cada uno necesita aprender a tolerar la soledad sin que se sienta como una amenaza a su existencia, empezando por ratos cortos. Notar que un límite del otro no es lo mismo que un abandono real. Construir una vida con intereses propios fuera de la pareja ayuda a que la relación deje de ser la única fuente de seguridad de ambos.' },
+'humillacion|humillacion': { atrae:'Los dos saben cuidar, escuchar y dar sin pedir nada explícito a cambio, o al menos esa es la imagen que tienen de sí mismos. Hay una sensación reconfortante de estar con alguien igual de generoso, que jamás los va a hacer sentir que están pidiendo demasiado.', activa:'Ninguno pide ayuda cuando realmente la necesita, porque pedir se siente como una carga injusta para alguien a quien aman. Terminan cargando en silencio sus propios problemas, además de asumir parte de los del otro.', ciclo:'Se instala una competencia silenciosa de sacrificio. Ninguno disfruta del todo lo que da, y con los años se acumula un resentimiento que ninguno sabe nombrar, porque nombrarlo se sentiría como quejarse.', senales:['Ambos limpian o resuelven cosas "cuando hay visitas", pero lo dejan pasar estando solos.', 'Ninguno disfruta un regalo o elogio sin sentir la necesidad de devolverlo de inmediato.', 'Las conversaciones giran casi siempre en torno a ayudar a otras personas.', 'Cuando uno pone un límite, el otro se siente extrañamente herido.'], salida:'El trabajo de cada uno es aprender a recibir sin sentirse culpable, dejando que el otro haga algo por uno sin devolver el gesto de inmediato. Practicar decir que no, aunque incomode, es la forma más directa de salir del patrón. Es esencial que cada uno se permita un placer o un descanso sin pedir permiso ni ganárselo primero.' },
+'traicion|traicion': { atrae:'Se respetan como iguales fuertes, capaces, con palabra firme. Ninguno se deja manipular fácilmente por el otro, lo cual da una sensación profunda de seguridad: por fin alguien a la altura.', activa:'En cuanto aparece el primer desacuerdo real, los dos necesitan tener la razón, y los dos temen mostrar la primera grieta de vulnerabilidad, porque hacerlo se siente como entregarle al otro una ventaja.', ciclo:'La relación se convierte en una negociación constante de poder. Con el tiempo, esa lucha agota la intimidad real: ninguno baja la guardia, así que ninguno se siente realmente acompañado.', senales:['Las discusiones casi nunca terminan con un "tenías razón".', 'Cada uno guarda información o sentimientos "por si acaso".', 'Compiten, sin decirlo, por quién es más independiente.', 'Las muestras de afecto son prácticas más que vulnerables.'], salida:'Alguien tiene que arriesgarse primero a mostrar una vulnerabilidad real, sin que sea calculada. Ayuda nombrar que el objetivo no es ganar la discusión sino entenderse, y acordar turnos reales para decidir. La confianza no se construye demostrando fuerza, sino permitiendo ver la falta de ella.' },
+'injusticia|injusticia': { atrae:'Hay una admiración genuina por la disciplina y la palabra del otro. Los dos valoran hacer las cosas bien y cumplir, lo cual da una base sólida y confiable a la relación.', activa:'Los dos están desconectados de lo que sienten en el momento exacto en que lo sienten. Cuando algo les afecta, automáticamente dicen "estoy bien", así que ninguno tiene información real de cómo está el otro.', ciclo:'La relación puede verse impecable desde fuera, ordenada, sin dramas. Pero por dentro hay una frialdad que ninguno reconoce, porque reconocerla significaría admitir una imperfección.', senales:['La respuesta a "¿cómo estás?" es casi siempre automática y positiva.', 'El enojo aparece como silencio o exceso de productividad, nunca directo.', 'Se comparan con otras parejas "que lo hacen mejor".', 'Rara vez se permiten estar genuinamente satisfechos con lo construido.'], salida:'El ejercicio central es nombrar la emoción real en el momento en que aparece, en vez de "todo bien", empezando con emociones pequeñas. Aceptar que el otro pueda verlos imperfectos, sin que sea un fracaso, permite que la relación deje de ser solo eficiente y empiece a ser íntima.' },
+'rechazo|abandono': { atrae:'Al inicio se sienten complementarios: uno necesita espacio, el otro cercanía. El retraído se siente menos solo sin estar abrumado; el dependiente siente que, por fin, alguien lo busca.', activa:'El dependiente necesita confirmación constante; el retraído necesita silencio y desaparecer sin dar explicaciones. Cada uno dispara exactamente el miedo central del otro.', ciclo:'Es un ciclo clásico de persecución y huida: cuanto más persigue el dependiente, más necesita desaparecer el retraído, y cuanto más desaparece, más pánico siente el dependiente.', senales:['Los mensajes sin responder generan ansiedad creciente de un lado y presión asfixiante del otro.', 'Las peleas repiten el guion: "te alejaste" contra "me ahogabas".', 'El retraído inventa excusas para estar solo; el dependiente inventa razones para tener contacto.', 'Ninguno nombra directamente lo que teme.'], salida:'El retraído puede avisar antes de retirarse ("necesito unos días, no es por ti") en vez de desaparecer sin aviso. El dependiente puede practicar tolerar esos espacios sin interpretarlos como rechazo automático, comprobando que el otro vuelve. Ninguno puede pedirle al otro que deje de ser quien es, pero sí negociar formas más claras de pedir espacio y cercanía.' },
+'rechazo|humillacion': { atrae:'El masoquista da sin exigir nada a cambio, lo cual el retraído agradece: alguien que no presiona ni pide explicaciones, simplemente disponible sin condiciones.', activa:'El retraído se aísla cuando algo le afecta; el masoquista interpreta ese silencio como una señal de que está fallando, y da todavía más, sin que se le ocurra simplemente preguntar.', ciclo:'Cuanto más se entrega el masoquista, más invadido se siente el retraído, que se aleja más, confirmando al masoquista que no es suficientemente bueno.', senales:['El masoquista anticipa necesidades del retraído que este no ha expresado.', 'El retraído evita contar lo que le pasa para "no darle trabajo" al otro.', 'Hay un desequilibrio visible en quién inicia el contacto y las muestras de cariño.', 'El masoquista empieza a sentirse "demasiado" para el retraído.'], salida:'El masoquista necesita aprender que el silencio del retraído no es un juicio sobre su valor, y resistir el impulso de compensar con más entrega. El retraído puede ofrecer una señal mínima ("estoy bien, solo necesito tiempo") para que el otro no llene ese vacío con su propia culpa.' },
+'rechazo|traicion': { atrae:'El controlador transmite seguridad y firmeza, algo que el retraído, inseguro de su propio valor, encuentra tranquilizador. Sentirse "elegido" por alguien tan seguro se siente como una validación rara.', activa:'En cuanto la relación exige compromiso real, el retraído se repliega. El controlador no lee ese repliegue como miedo, sino como traición o falta de respeto a su autoridad.', ciclo:'El controlador presiona para recuperar el control, lo cual empuja al retraído a desaparecer más — termina muchas veces en ruptura, confirmando el patrón de los dos.', senales:['El controlador empieza a cuestionar dónde estuvo el retraído.', 'El retraído oculta pequeñas cosas para evitar el interrogatorio.', 'Las ausencias se interpretan automáticamente como desinterés.', 'El controlador se vuelve más rígido con las reglas justo cuando más inseguro se siente.'], salida:'El controlador necesita notar que presionar más cuando el otro se retira nunca funciona, y que esa necesidad de control es su propio miedo a ser decepcionado disfrazado de fuerza. El retraído necesita practicar quedarse en la conversación incómoda un poco más de lo que su instinto le pide.' },
+'rechazo|injusticia': { atrae:'Ninguno presiona al otro para que "sienta" o se abra de más, así que la relación puede sentirse tranquila desde el inicio, sin exigencias emocionales agotadoras.', activa:'Los dos prefieren la distancia intelectual a la intimidad real: el retraído porque desaparecer es su forma de protegerse, el rígido porque sentir "trae sufrimiento".', ciclo:'Pueden construir una relación funcional y ordenada, pero cuando llega una crisis real, ninguno sabe cómo sostener al otro, porque ninguno practicó nunca la vulnerabilidad.', senales:['Las conversaciones rara vez tocan temas emocionales profundos.', 'Ante una mala noticia, la respuesta es resolver prácticamente, no procesar emocionalmente.', 'Ninguno sabe con certeza el miedo más profundo del otro.', 'La relación se sostiene en rutinas más que en cercanía real.'], salida:'El rígido puede practicar decir lo que realmente siente en vez de "todo bien", empezando con algo pequeño. El retraído puede quedarse presente un poco más ante la primera señal de incomodidad, en vez de desaparecer.' },
+'abandono|humillacion': { atrae:'Al inicio parece ideal: uno necesita atención constante, el otro vive para darla sin condiciones — los dos sienten que encontraron a alguien "hecho a su medida".', activa:'El masoquista da por la creencia de que no merece nada para sí mismo, no por buscar algo a cambio. El dependiente, que sí necesita recibir algo a cambio, no nota cuánto le cuesta al otro sostener ese ritmo.', ciclo:'El masoquista se agota y pone un límite, algo raro en él. El dependiente, que interpreta cualquier límite como abandono, lo vive como traición y pide todavía más.', senales:['El masoquista acumula resentimiento que no expresa, mientras sigue dando.', 'El dependiente pide cada vez más y siente que "nunca alcanza".', 'Cuando el masoquista dice "no puedo hoy", la reacción es desproporcionada.', 'Hay sensación creciente de que la relación gira en torno a uno solo.'], salida:'El masoquista necesita reconocer que dar sin límite no es generosidad pura, y practicar decir que no sosteniéndose en la culpa sin retroceder. El dependiente necesita aprender que un límite no es abandono, y trabajar su capacidad de sostenerse solo.' },
+'abandono|traicion': { atrae:'Es una de las combinaciones más intensas: atracción fuerte, casi magnética, donde el dependiente encuentra en el controlador la seguridad que tanto ha buscado.', activa:'El dependiente persigue cercanía constante; el controlador la promete pero le teme al compromiso real, porque debajo de su máscara casi siempre carga su propia herida de abandono.', ciclo:'Es persecución y huida: cuanto más pide el dependiente, más se cierra el controlador, y cuanto más se cierra, más abandonado se siente el dependiente, que pide todavía más.', senales:['El controlador se vuelve más distante justo cuando la relación se intensifica.', 'El dependiente siente que tiene que "ganarse" la atención del otro.', 'Las discusiones grandes terminan con el controlador alejándose y el otro persiguiendo.', 'El controlador rara vez habla de sus propios miedos.'], salida:'El controlador necesita reconocer que su control no es fuerza, es miedo a repetir un abandono antiguo. El dependiente necesita notar que perseguir más cuando el otro se cierra empeora lo que más teme, y practicar dar espacio real.' },
+'abandono|injusticia': { atrae:'El rígido transmite estabilidad y consistencia, justo lo que el dependiente busca como ancla frente a su miedo a quedarse solo.', activa:'El dependiente necesita confirmaciones verbales frecuentes. El rígido, desconectado de sus propias emociones, vive esa necesidad como una carga que no sabe cómo sostener.', ciclo:'La frialdad del rígido confirma el miedo del dependiente; la intensidad emocional del dependiente confirma el miedo del rígido a perder el control.', senales:['El dependiente busca cada vez más pruebas de afecto.', 'El rígido responde con soluciones prácticas a lo que solo necesitaba ser escuchado.', 'Hay sensación de hablar idiomas distintos para lo mismo.', 'El dependiente interpreta la calma del rígido como desinterés.'], salida:'El rígido puede nombrar, aunque sea brevemente, una emoción real. El dependiente puede pedir menos confirmación verbal y notar las formas en que el rígido sí muestra cuidado, a través de actos.' },
+'humillacion|traicion': { atrae:'Funciona bien en la superficie: el controlador dirige con seguridad, el masoquista apoya sin cuestionar, dando una sensación de equipo estable.', activa:'Es una guerra de controles invisibles: uno manda abiertamente, el otro controla por la culpa y el sacrificio silencioso, "mira todo lo que hago por ti".', ciclo:'El controlador puede aprovecharse, sin notarlo, de que el otro siempre cede; el masoquista acumula resentimiento que sale como cansancio o distancia.', senales:['El controlador toma decisiones importantes sin consultar realmente.', 'El masoquista dice "como tú quieras" incluso en decisiones que sí le importan.', 'Hay explosiones de frustración desproporcionadas para el motivo inmediato.', 'El controlador se sorprende cuando el otro expresa estar agotado.'], salida:'El masoquista necesita practicar decir que no de forma directa. El controlador necesita preguntar genuinamente qué necesita el otro, en vez de asumir que el silencio significa acuerdo.' },
+'humillacion|injusticia': { atrae:'Ambos reprimen lo que sienten, así que la convivencia diaria puede parecer tranquila y ordenada, sin grandes conflictos visibles.', activa:'El masoquista reprime por miedo a avergonzar; el rígido reprime por miedo a parecer débil. Ninguno pide lo que realmente necesita.', ciclo:'Se instala un auto-borrado mutuo: los dos ceden tanto que con el tiempo ninguno sabe qué siente realmente el otro, ni qué siente él mismo.', senales:['Las conversaciones difíciles se posponen indefinidamente.', 'Ambos parecen "estar bien" casi todo el tiempo.', 'Los desacuerdos se resuelven cediendo en silencio, no conversando.', 'Hay sensación compartida de estar solos incluso estando juntos.'], salida:'El rígido puede nombrar una emoción real, aunque sea pequeña. El masoquista puede pedir algo para sí mismo sin esperar a ganárselo. Ambos se benefician de preguntarse "¿qué necesito yo en esto?".' },
+'traicion|injusticia': { atrae:'Hay respeto mutuo por la fuerza, la disciplina y la orientación a resultados del otro: dos personalidades que se admiran genuinamente.', activa:'El controlador maneja el poder de forma relacional; el rígido lo maneja a través de la moral. Compiten por tener la razón al mismo tiempo, desde lugares distintos.', ciclo:'Ninguno cede fácilmente: uno porque ceder es perder poder, el otro porque ceder es ser injusto consigo mismo. La vulnerabilidad queda fuera de la relación.', senales:['Las discusiones se vuelven debates sobre quién tiene mejores argumentos.', 'Ambos evitan disculparse primero.', 'Hay competencia sutil por quién se esfuerza o sacrifica más.', 'La ternura escasea frente a la organización.'], salida:'El controlador puede practicar preguntar en vez de decidir por el otro. El rígido puede soltar la necesidad de que todo sea "justo" en el momento. El acuerdo real aparece cuando ninguno necesita ganar la conversación.' }
+};
+
+const pairsAmistad = {
+'rechazo|rechazo': { une:'Comodidad inmediata en los silencios compartidos: ninguno exige que el otro hable más de lo que quiere, ni interpreta la distancia como desinterés.', friccion:'Ninguno invita activamente al otro a planes ni pregunta cómo está de verdad. La amistad puede sostenerse en mensajes esporádicos durante años sin profundizar.', senales:['Pasan meses sin verse y ninguno lo nota especialmente.', 'Las conversaciones rara vez bajan del nivel de lo cotidiano.', 'Ninguno sabe con certeza por lo que el otro está pasando en momentos difíciles.', 'Cuando uno necesita ayuda real, le cuesta pedirla.'], salida:'Alguien tiene que tomar la iniciativa de proponer un plan o preguntar algo más personal, aunque se sienta como invadir. Compartir algo pequeño y real de vez en cuando evita que la amistad se quede solo en la superficie cómoda.' },
+'abandono|abandono': { une:'Los dos entienden y validan la necesidad del otro de sentirse incluido y de hablar seguido; nadie le hace sentir al otro que pide demasiado.', friccion:'Pueden aparecer celos de otras amistades o planes hechos sin avisar, leídos como un "me estás dejando de lado" aunque no haya mala intención.', senales:['Hay reclamos del tipo "ya no me cuentas nada".', 'Las publicaciones en redes con otras personas generan incomodidad.', 'Ambos necesitan que el otro confirme regularmente la importancia de la amistad.', 'Pequeños malentendidos escalan más de lo que el hecho amerita.'], salida:'Es útil que cada uno construya otros vínculos fuera de esta amistad, para que esta no cargue con todo el peso de la necesidad de pertenencia de ambos. Hablar directamente del miedo, en vez de mostrarlo con distancia, ayuda mucho.' },
+'humillacion|humillacion': { une:'Saben escuchar, apoyar y estar presentes sin juzgar; los dos se sienten genuinamente cuidados.', friccion:'Ninguno pide ayuda cuando realmente la necesita. Terminan cargando solos sus propios problemas, además de los del otro.', senales:['Ambos minimizan sus propios problemas cuando el otro pregunta.', 'Se ofrecen ayuda constantemente, pero les cuesta aceptarla.', 'Hay sensación de estar siempre disponibles sin reciprocidad.', 'Ninguno expresa cuando está agotado de la relación.'], salida:'Practicar pedir ayuda explícitamente, aunque incomode, es el cambio más directo. Notar cuándo se está dando más de lo que se puede sostener, y decirlo antes de llegar al agotamiento.' },
+'traicion|traicion': { une:'Se respetan como personas capaces y comparten objetivos; funciona muy bien para emprender proyectos juntos.', friccion:'Compiten por liderar el grupo o tener la última palabra. A ninguno le resulta fácil ceder en una discusión.', senales:['Las decisiones grupales siguen casi siempre la idea de uno solo.', 'Hay tono sutil de competencia en logros personales.', 'Ninguno pide consejo al otro con facilidad.', 'Las disculpas, cuando ocurren, son indirectas.'], salida:'Acordar explícitamente turnos para decidir o liderar evita que la competencia esté siempre presente. Decir "tenías razón" en voz alta fortalece la amistad mucho más de lo que ambos esperarían.' },
+'injusticia|injusticia': { une:'Ambos son confiables, cumplen lo que prometen; es una amistad sólida en los hechos.', friccion:'Ninguno habla de cómo se siente realmente; la amistad puede ser duradera pero poco íntima.', senales:['Pueden pasar años sin una conversación realmente vulnerable.', 'Los problemas personales se mencionan de pasada.', 'Ambos juzgan en silencio cuando el otro falla en cumplir.', 'La amistad se siente más segura que cercana.'], salida:'Compartir algo que no esté resuelto ni perfectamente explicado ayuda a que la amistad deje de ser solo eficiente y se vuelva más cercana.' },
+'rechazo|abandono': { une:'El dependiente incluye activamente al retraído en planes, lo cual lo hace sentir valorado sin tener que pedirlo.', friccion:'El retraído desaparece sin avisar; el dependiente lo vive como rechazo personal, generando reclamos que alejan al retraído más.', senales:['El dependiente envía varios mensajes seguidos cuando el otro tarda en contestar.', 'El retraído se siente culpable por desaparecer, pero lo hace de todas formas.', 'Hay temporadas de mucha cercanía seguidas de silencio casi total.', 'El dependiente interpreta cualquier ausencia como el fin de la amistad.'], salida:'El retraído puede avisar brevemente cuando necesita espacio. El dependiente puede practicar no tomarse esas ausencias como algo personal.' },
+'rechazo|humillacion': { une:'El masoquista no exige nada del retraído, así que este se siente cómodo y sin presión.', friccion:'El masoquista da consejos sin que se los pidan, lo cual el retraído puede sentir como invasión.', senales:['El masoquista se ofrece a ayudar con cosas que el otro no mencionó como problema.', 'El retraído agradece la ayuda pero se aleja un poco más después.', 'Hay asimetría en quién pregunta cómo está el otro.', 'El masoquista interpreta el silencio como que hizo algo mal.'], salida:'El masoquista puede preguntar antes de ayudar. El retraído puede avisar cuando algo le resulta demasiado, en vez de alejarse sin explicación.' },
+'rechazo|traicion': { une:'El controlador organiza los planes, liberando al retraído de tener que proponer o decidir.', friccion:'Si el retraído cancela sin avisar, el controlador lo toma como falta de compromiso.', senales:['El controlador hace planes sin confirmar realmente con tiempo.', 'Las cancelaciones de último momento generan molestia desproporcionada.', 'El retraído siente que tiene que justificar mucho sus ausencias.', 'El controlador invita menos al retraído "para no arriesgarse".'], salida:'El controlador puede preguntar directamente qué le pasa al otro. El retraído puede esforzarse en avisar antes de desaparecer de un plan.' },
+'rechazo|injusticia': { une:'Ninguno exige intimidad emocional del otro; amistad tranquila, de bajo mantenimiento.', friccion:'En una crisis real, ninguno sabe cómo apoyar al otro, porque ambos evitan hablar de lo que sienten.', senales:['Frente a una mala noticia, la respuesta es práctica, no presente.', 'Ninguno pregunta dos veces "cómo estás" cuando la respuesta fue "bien".', 'La amistad funciona en lo cotidiano pero se vuelve incómoda en crisis.', 'Ambos prefieren resolver cosas prácticas antes que hablar de sentimientos.'], salida:'Practicar preguntar "¿cómo estás de verdad?" y esperar la respuesta sin prisa por cambiar de tema ayuda a sostener algo más que lo cotidiano.' },
+'abandono|humillacion': { une:'El masoquista siempre está disponible, lo cual calma la ansiedad del dependiente.', friccion:'El dependiente pide y pide sin notar el desgaste; el masoquista no sabe poner límites.', senales:['El dependiente recurre al masoquista para casi todos sus problemas.', 'El masoquista responde "siempre" aunque esté agotado.', 'Hay asimetría clara en cuánto invierte cada uno en escuchar al otro.', 'El masoquista siente que no puede decir que no sin sentirse culpable.'], salida:'El masoquista necesita practicar decir "hoy no puedo". El dependiente puede notar cuándo está pidiendo demasiado y preguntar cómo está el otro.' },
+'abandono|traicion': { une:'El controlador da seguridad y dirección, algo que el dependiente valora muchísimo.', friccion:'El controlador necesita espacio; el dependiente lo interpreta como desinterés.', senales:['El controlador "desaparece" periódicamente sin que signifique nada, pero el otro lo vive con angustia.', 'El dependiente pregunta con frecuencia si todo está bien sin motivo concreto.', 'El controlador se siente presionado por la necesidad constante de reafirmación.', 'Hay dinámica donde uno necesita mucho más que el otro.'], salida:'El controlador puede avisar cuando necesita espacio. El dependiente puede trabajar en no interpretar esa distancia como rechazo automáticamente.' },
+'abandono|injusticia': { une:'El rígido es estable y cumplidor, algo que tranquiliza profundamente al dependiente.', friccion:'El dependiente necesita validación frecuente; el rígido lo vive como carga emocional.', senales:['El dependiente comparte con detalle; el rígido responde con soluciones prácticas.', 'Hay sensación, del lado del dependiente, de que el otro no entiende.', 'El rígido se siente agobiado por la intensidad emocional repetida.', 'El dependiente busca sin éxito la misma cercanía que tiene con otras personas.'], salida:'El rígido puede ofrecer una palabra de validación cuando el otro comparte algo emocional. El dependiente puede notar las formas no verbales en que el rígido sí muestra cuidado.' },
+'humillacion|traicion': { une:'El masoquista apoya las decisiones del controlador sin cuestionarlas, dando fluidez visible.', friccion:'El controlador puede aprovecharse sin notarlo de que el otro siempre cede.', senales:['Las decisiones de grupo siguen casi siempre la preferencia del controlador.', 'El masoquista dice estar de acuerdo aunque preferiría otra cosa.', 'Hay momentos de distancia repentina del masoquista que el otro no entiende.', 'El controlador rara vez pregunta directamente la opinión del otro.'], salida:'El controlador puede preguntar activamente la opinión del otro antes de decidir. El masoquista puede practicar decir lo que realmente piensa, empezando por temas pequeños.' },
+'humillacion|injusticia': { une:'Ambos son responsables y buenos compañeros para proyectos compartidos.', friccion:'Ninguno expresa cómo se siente; los problemas se acumulan en silencio hasta explotar.', senales:['Ninguno menciona cuando algo le molestó en el momento.', 'Las tensiones "se resuelven solas" sin haberse conversado realmente.', 'Hay episodios de distancia o frialdad que ninguno explica del todo.', 'Ambos prefieren la amistad funcional antes que un conflicto abierto.'], salida:'Hacer check-ins ocasionales y directos ayuda a sacar a la luz lo que ninguno diría espontáneamente. Nombrar la incomodidad en el momento evita que se acumule.' },
+'traicion|injusticia': { une:'Ambos son confiables y orientados a hacer las cosas bien; amistad productiva y sólida.', friccion:'Chocan por tener siempre la razón, uno por autoridad, el otro por principios.', senales:['Los desacuerdos se vuelven debates sobre mejores argumentos.', 'Ambos evitan ceder o disculparse primero.', 'Hay tensión de fondo sobre quién dirige realmente la amistad.', 'La amistad funciona mejor estructurada que de forma espontánea.'], salida:'Acordar que el objetivo en los desacuerdos es entenderse, no ganar, ayuda a bajar la intensidad. Preguntar "¿qué necesitas tú en esto?" abre un espacio real.' }
+};
+
+function key(a,b){ return [a,b].sort().join('|'); }
+function lookup(obj,a,b){ const v = obj[a+'|'+b]; return v !== undefined ? v : obj[b+'|'+a]; }
+
+const pctAmor = {
+'rechazo|rechazo':58,'abandono|abandono':50,'humillacion|humillacion':60,'traicion|traicion':55,'injusticia|injusticia':62,
+'rechazo|abandono':45,'rechazo|humillacion':65,'rechazo|traicion':50,'rechazo|injusticia':68,
+'abandono|humillacion':55,'abandono|traicion':40,'abandono|injusticia':50,
+'humillacion|traicion':58,'humillacion|injusticia':63,
+'traicion|injusticia':60
+};
+const pctAmistad = {
+'rechazo|rechazo':70,'abandono|abandono':65,'humillacion|humillacion':72,'traicion|traicion':68,'injusticia|injusticia':75,
+'rechazo|abandono':60,'rechazo|humillacion':75,'rechazo|traicion':60,'rechazo|injusticia':78,
+'abandono|humillacion':68,'abandono|traicion':55,'abandono|injusticia':62,
+'humillacion|traicion':65,'humillacion|injusticia':73,
+'traicion|injusticia':70
+};
+const fortalezasAmor = {
+'rechazo|rechazo':'Cuando ambos sanan un poco, se vuelven el refugio perfecto el uno del otro: ninguno presiona, ninguno juzga la necesidad de soledad del otro, y eso construye una confianza silenciosa muy difícil de encontrar en otras combinaciones. Si logran nombrar lo que sienten en vez de solo desaparecer, pueden construir una intimidad profunda basada en la aceptación total del espacio del otro.',
+'abandono|abandono':'Cuando logran calmar su propia ansiedad por separado, son capaces de un nivel de ternura y cuidado mutuo enorme — saben acompañar, escuchar y sostener al otro en momentos difíciles como pocas combinaciones. Esa misma sensibilidad que los hace necesitar tanto también los hace profundamente generosos en el cariño que dan.',
+'humillacion|humillacion':'Es una de las parejas con mayor capacidad de cuidado genuino que existe: cuando aprenden a recibir, se convierten en un equipo extraordinariamente generoso, capaz de sostenerse en momentos duros sin que ninguno se sienta solo en la dificultad.',
+'traicion|traicion':'Juntos pueden lograr metas grandes — son de las combinaciones más capaces de construir proyectos ambiciosos, tomar decisiones difíciles y sostenerse en momentos de crisis externa, porque ninguno se desmorona fácilmente.',
+'injusticia|injusticia':'Es una de las relaciones más estables y confiables que existen: cumplen lo que prometen, se apoyan en lo práctico sin fallar, y construyen una vida en común sólida y predecible, algo muy valioso con el tiempo.',
+'rechazo|abandono':'Si logran equilibrar el ritmo, esta combinación puede sanar mucho a los dos: el retraído aprende, poco a poco, que se puede recibir cercanía sin perder su espacio, y el dependiente aprende que la distancia no siempre significa abandono.',
+'rechazo|humillacion':'El cuidado incondicional del masoquista, combinado con el respeto natural del retraído por el espacio ajeno, puede crear una relación muy poco invasiva y genuinamente tierna, si ambos aprenden a pedir lo que necesitan en vez de adivinarlo.',
+'rechazo|traicion':'El retraído puede encontrar, en la seguridad del controlador, un ancla real para animarse a mostrarse más; el controlador puede aprender, gracias a la calma del retraído, a soltar un poco el control sin sentir que pierde autoridad.',
+'rechazo|injusticia':'Comparten una capacidad poco común de respetar el ritmo emocional del otro sin agobiarlo, lo cual puede traducirse en una relación de mucha calma y respeto mutuo, siempre que ambos se animen, de a poco, a abrirse más.',
+'abandono|humillacion':'El dependiente puede aprender, gracias a la generosidad genuina del masoquista, lo que se siente ser cuidado de verdad; el masoquista puede aprender, gracias a la calidez del dependiente, a permitirse recibir afecto sin sentir que tiene que ganárselo.',
+'abandono|traicion':'Cuando el controlador logra mostrar su lado vulnerable, esta combinación puede volverse una de las más profundas y comprometidas: el dependiente ofrece una entrega total, y el controlador, cuando se permite confiar, ofrece protección y lealtad muy fuertes.',
+'abandono|injusticia':'El dependiente puede aprender, con el tiempo, a confiar en el cuidado silencioso y constante del rígido; el rígido puede aprender, gracias a la calidez del dependiente, a abrirse emocionalmente un poco más de lo que jamás se permitió antes.',
+'humillacion|traicion':'El masoquista aporta un cuidado genuino y constante; el controlador aporta dirección y seguridad — si ambos aprenden a hablar claro, pueden formar un equipo muy sólido donde cada uno cubre lo que al otro le cuesta.',
+'humillacion|injusticia':'Ambos valoran profundamente el compromiso y la responsabilidad, lo que les da una base de confianza muy fuerte; cuando se permiten mostrar algo de vulnerabilidad, pueden construir una relación profundamente leal y duradera.',
+'traicion|injusticia':'Es una combinación poderosa para construir una vida ambiciosa juntos: los dos saben comprometerse, cumplir y sostener responsabilidades grandes, y cuando aprenden a ceder, forman un equipo muy difícil de derrotar.'
+};
+const fortalezasAmistad = {
+'rechazo|rechazo':'Es una de las amistades menos demandantes y más respetuosas que existen — ninguno presiona, y eso genera una confianza tranquila que dura años sin esfuerzo.',
+'abandono|abandono':'Son amigos que se hacen sentir profundamente importantes el uno al otro; rara vez hay duda sobre el cariño que se tienen.',
+'humillacion|humillacion':'Es una amistad de cuidado genuino, de las que de verdad están presentes en los momentos difíciles sin esperar nada a cambio.',
+'traicion|traicion':'Son socios naturales para metas y proyectos — juntos logran cosas que solos les costaría más.',
+'injusticia|injusticia':'Es de las amistades más confiables y duraderas: siempre se puede contar con el otro en lo que de verdad importa.',
+'rechazo|abandono':'El dependiente le da al retraído un sentido de pertenencia sin presión; el retraído le da al dependiente una presencia tranquila y constante.',
+'rechazo|humillacion':'Es una amistad de bajo conflicto y alta aceptación — el masoquista nunca exige, y el retraído se siente genuinamente libre de ser como es.',
+'rechazo|traicion':'El controlador aporta estructura y planes; el retraído aporta calma — juntos arman una dinámica práctica y funcional.',
+'rechazo|injusticia':'Es de las amistades más tranquilas que existen, perfecta para quienes valoran la compañía sin exigencias emocionales constantes.',
+'abandono|humillacion':'Es una amistad de cuidado profundo donde el dependiente se siente genuinamente sostenido y el masoquista se siente útil y valorado.',
+'abandono|traicion':'El dependiente aporta calidez; el controlador aporta dirección — buena combinación para sostenerse en momentos difíciles.',
+'abandono|injusticia':'El rígido aporta una estabilidad rara de encontrar; el dependiente aporta calidez que el rígido pocas veces recibe en otras amistades.',
+'humillacion|traicion':'El masoquista aporta cuidado constante; el controlador aporta liderazgo — funciona muy bien para proyectos o planes en grupo.',
+'humillacion|injusticia':'Ambos son de las personas más confiables que se pueden tener cerca; una amistad sólida y de bajo drama.',
+'traicion|injusticia':'Excelente combinación para proyectos, metas compartidas o emprendimientos — ambos cumplen y se exigen mutuamente a dar lo mejor.'
+};
+
+const colorScale = ['#9B86B5','#7C9CB8','#C79A5E','#B66E6E','#74A98C'];
+
+const woundListEl = document.getElementById('woundList');
+wounds.forEach(w=>{
+  const d = document.createElement('div');
+  d.className = 'wcard';
+  d.style.setProperty('--c', `var(${w.color})`);
+  d.innerHTML = `<div class="name">${w.name}</div><div class="mask">máscara: ${w.mask}</div>
+    <div class="motor">"${w.motor}"</div>
+    <div class="wsub"><div class="wt">origen</div><p>${w.origen}</p></div>
+    <div class="wsub"><div class="wt">marca en el cuerpo</div><p>${w.cuerpo}</p></div>
+    <div class="wsub"><div class="wt">patrón oculto</div><p>${w.patron}</p></div>
+    <div class="wsub"><div class="wt">tarea de sanación</div><p>${w.tarea}</p></div>`;
+  woundListEl.appendChild(d);
+});
+
+const qlist = document.getElementById('quizList');
+const scaleLabels = ['Nunca','A veces','Frecuente','Me describe'];
+const answers = new Array(quizItems.length).fill(0);
+quizItems.forEach((q,i)=>{
+  const row = document.createElement('div');
+  row.className = 'qitem';
+  const scaleBtns = scaleLabels.map((lbl,v)=>`<button type="button" data-i="${i}" data-v="${v}" class="${v===0?'active':''}">${lbl}</button>`).join('');
+  row.innerHTML = `<div class="qtext">${q.t}</div><div class="qscale">${scaleBtns}</div>`;
+  qlist.appendChild(row);
+});
+qlist.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-i]');
+  if(!btn) return;
+  const i = parseInt(btn.dataset.i), v = parseInt(btn.dataset.v);
+  answers[i] = v;
+  btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+document.getElementById('quizBtn').onclick = ()=>{
+  const scores = {rechazo:0,abandono:0,humillacion:0,traicion:0,injusticia:0};
+  quizItems.forEach((q,i)=>{ scores[q.w]+=answers[i]; });
+  const maxPerWound = 18;
+  const sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const resEl = document.getElementById('quizResult');
+  const top = wounds.find(w=>w.id===sorted[0][0]);
+  const second = wounds.find(w=>w.id===sorted[1][0]);
+  const closeSecond = sorted[1][1] >= sorted[0][1]-3 && sorted[1][1]>0;
+
+  let bars = sorted.map(([id,sc])=>{
+    const w = wounds.find(x=>x.id===id);
+    const pct = Math.round(sc/maxPerWound*100);
+    return `<div class="barrow"><div class="blabel">${w.name}</div><div class="bartrack"><div class="barfill" style="width:${pct}%; background:var(${w.color});"></div></div><div class="bpct">${pct}%</div></div>`;
+  }).join('');
+
+  resEl.innerHTML = `<div class="resultcard">
+    <div class="label">tu herida dominante</div>
+    <div class="name" style="color:var(${top.color})">${top.name} — máscara de ${top.mask}</div>
+    <p style="font-size:14px; color:var(--text-dim); margin:0 0 1rem;">${top.patron}</p>
+    ${closeSecond ? `<p style="font-size:13px; color:var(--text-faint); margin:0 0 1rem;">Muy cerca también aparece <strong style="color:var(${second.color})">${second.name}</strong> — es común cargar dos heridas con fuerza similar.</p>` : ''}
+    <div style="margin:1rem 0;">${bars}</div>
+    <button class="gobtn" onclick="preselect('${top.id}')">Ver su compatibilidad ↓</button>
+  </div>`;
+  resEl.style.display='block';
+};
+
+function preselect(id){
+  selected = [id];
+  renderChips();
+  document.getElementById('chips').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+let mode = 'amor';
+let selected = [];
+
+document.getElementById('modeAmor').onclick = ()=>{ mode='amor'; toggleMode(); };
+document.getElementById('modeAmistad').onclick = ()=>{ mode='amistad'; toggleMode(); };
+function toggleMode(){
+  document.getElementById('modeAmor').classList.toggle('active', mode==='amor');
+  document.getElementById('modeAmistad').classList.toggle('active', mode==='amistad');
+  renderChips();
+}
+document.getElementById('clearSel').onclick = ()=>{ selected=[]; renderChips(); };
+
+function renderChips(){
+  const chipsEl = document.getElementById('chips');
+  chipsEl.innerHTML = '';
+  wounds.forEach(w=>{
+    const count = selected.filter(id=>id===w.id).length;
+    const isSel = count>0;
+    const c = document.createElement('div');
+    c.className = 'chip' + (isSel ? ' sel':'');
+    c.style.setProperty('--c', `var(${w.color})`);
+    c.innerHTML = `<div class="name" style="color:${isSel?`var(${w.color})`:'var(--text)'}">${w.name}</div><div class="mask">${w.mask}</div>${count===2?'<div class="x2">x2</div>':''}`;
+    c.onclick = ()=>{
+      if(selected.length>=2){ selected=[w.id]; } else { selected.push(w.id); }
+      renderChips();
+    };
+    chipsEl.appendChild(c);
+  });
+
+  const resEl = document.getElementById('compatResult');
+  if(selected.length<2){
+    resEl.innerHTML = `<div class="placeholder">Selecciona ${2-selected.length} herida${selected.length===0?'s':''} más</div>`;
+    return;
+  }
+  const w1 = wounds.find(w=>w.id===selected[0]);
+  const w2 = wounds.find(w=>w.id===selected[1]);
+  const data = mode==='amor' ? lookup(pairsAmor,selected[0],selected[1]) : lookup(pairsAmistad,selected[0],selected[1]);
+  const pct = mode==='amor' ? lookup(pctAmor,selected[0],selected[1]) : lookup(pctAmistad,selected[0],selected[1]);
+  const fortalezas = mode==='amor' ? lookup(fortalezasAmor,selected[0],selected[1]) : lookup(fortalezasAmistad,selected[0],selected[1]);
+  const senalesLi = data.senales.map(s=>`<li>${s}</li>`).join('');
+  const pctColor = pct>=65 ? '#74A98C' : pct>=50 ? '#C79A5E' : '#B66E6E';
+  const pctLabel = pct>=65 ? 'fluye con relativa facilidad' : pct>=50 ? 'requiere trabajo consciente de ambos' : 'exige mucha conciencia para no caer en el patrón';
+  const pctBlock = `<div class="field" style="border-top:none; padding-top:0;">
+      <div style="display:flex; align-items:center; gap:14px; margin-bottom:0.5rem;">
+        <div style="font-family:'Fraunces',serif; font-size:30px; font-style:italic; color:${pctColor};">${pct}%</div>
+        <div style="font-size:12.5px; color:var(--text-dim); max-width:420px;">compatibilidad estimada — ${pctLabel}</div>
+      </div>
+      <div class="bartrack" style="height:6px;"><div class="barfill" style="width:${pct}%; background:${pctColor};"></div></div>
+      <p style="font-size:11.5px; color:var(--text-faint); margin:8px 0 0;">Esto no es una medida científica ni un destino fijo — refleja qué tan fácil o demandante tiende a ser la dinámica según el patrón de cada herida.</p>
+    </div>
+    <div class="field" style="background:rgba(116,169,140,0.08); margin:1rem -1.5rem; padding:1.1rem 1.5rem; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="ftitle" style="color:#74A98C;">lo bueno — fortalezas reales de esta combinación</div>
+      <p>${fortalezas}</p>
+    </div>`;
+
+  if(mode==='amor'){
+    resEl.innerHTML = `<div class="resultcard">
+      <div class="pairhead"><span class="pname" style="color:var(${w1.color})">${w1.name}</span><span class="vs">+</span><span class="pname" style="color:var(${w2.color})">${w2.name}</span></div>
+      ${pctBlock}
+      <div class="field"><div class="ftitle">qué los atrae</div><p>${data.atrae}</p></div>
+      <div class="field"><div class="ftitle">qué activa en el otro</div><p>${data.activa}</p></div>
+      <div class="field"><div class="ftitle">el ciclo que se repite</div><p>${data.ciclo}</p></div>
+      <div class="field alerta"><div class="ftitle">señales de alerta</div><ul>${senalesLi}</ul></div>
+      <div class="field salida"><div class="ftitle">cómo se rompe el ciclo</div><p>${data.salida}</p></div>
+    </div>`;
+  } else {
+    resEl.innerHTML = `<div class="resultcard">
+      <div class="pairhead"><span class="pname" style="color:var(${w1.color})">${w1.name}</span><span class="vs">+</span><span class="pname" style="color:var(${w2.color})">${w2.name}</span></div>
+      ${pctBlock}
+      <div class="field"><div class="ftitle">qué los une</div><p>${data.une}</p></div>
+      <div class="field"><div class="ftitle">dónde friccionan</div><p>${data.friccion}</p></div>
+      <div class="field alerta"><div class="ftitle">señales de alerta</div><ul>${senalesLi}</ul></div>
+      <div class="field salida"><div class="ftitle">cómo se resuelve</div><p>${data.salida}</p></div>
+    </div>`;
+  }
+}
+renderChips();
+</script>
+</body>
+</html>
